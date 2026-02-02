@@ -13,12 +13,9 @@ echo.
 echo ====================================================
 echo Actualites:
 echo.
-echo -La chaine France Regions 8 arrive le 27 avril a 20h
-echo -Nouvelle application mobile disponible!
-echo  Disponible sur iOS et Android
-echo.
-echo -Rejoignez notre communaute:
-echo  Discord: https://discord.gg/qDTtWvnG8Y
+powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/ma-actus.txt' -OutFile '%temp%\actus.txt'" 2>nul
+type "%temp%\actus.txt" 2>nul || echo Aucune actualité disponible.
+del "%temp%\actus.txt" 2>nul
 echo.
 echo ====================================================
 echo.

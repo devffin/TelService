@@ -45,10 +45,15 @@ goto menu
 
 :my_rentals
 cls
-echo Accès refusé.
+echo Vos locations actives:
 echo.
-echo Pour des raisons de sécurité, vous ne pouvez pas voir vos locations actives.
-echo Contactez le support si nécessaire.
+set /p username="Entrez votre nom d'utilisateur: "
+echo Récupération des locations pour %username%...
+echo.
+powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/locs/%username%.txt' -OutFile '%temp%\%username%_locs.txt'" 2>nul
+type "%temp%\%username%_locs.txt" 2>nul || echo Aucune location trouvée pour %username%.
+del "%temp%\%username%_locs.txt" 2>nul
+echo.
 pause
 goto menu
 

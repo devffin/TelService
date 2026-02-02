@@ -9,200 +9,158 @@ echo ===============================================
 echo              TelService STORE
 echo ===============================================
 echo.
-
-REM Charger et afficher les applications disponibles
-echo Applications disponibles:
+if exist freeVM.bat (echo 1. [INSTALLE] LSE FreeVM) else (echo 1. [NON INSTALLE] LSE FreeVM)
+if exist myAIRBENZ.bat (echo 2. [INSTALLE] myAIRBENZ) else (echo 2. [NON INSTALLE] myAIRBENZ)
+if exist meteo.bat (echo 3. [INSTALLE] Meteorologie) else (echo 3. [NON INSTALLE] Meteorologie)
+if exist musique.bat (echo 4. [INSTALLE] Musique) else (echo 4. [NON INSTALLE] Musique)
 echo.
-
-REM App 1: LSE FreeVM
-echo [1] LSE FreeVM
-if exist "..\apps\freeVM.version.txt" (
-    for /f "delims=" %%v in ('type "..\apps\freeVM.version.txt"') do (
-        echo     Version installee: %%v
-    )
-    echo     Statut: [INSTALLEE]
-) else (
-    echo     Statut: [A TELECHARGER]
-)
+echo 5. Retour au menu principal TelService
 echo.
-
-REM App 2: myAIRBENZ
-echo [2] myAIRBENZ
-if exist "..\apps\myAIRBENZ.version.txt" (
-    for /f "delims=" %%v in ('type "..\apps\myAIRBENZ.version.txt"') do (
-        echo     Version installee: %%v
-    )
-    echo     Statut: [INSTALLEE]
-) else (
-    echo     Version: 1.0.0
-    echo     Statut: [A TELECHARGER]
-)
-echo.
-
-REM App 3: Meteorologie
-echo [3] Meteorologie
-if exist "..\apps\meteo.version.txt" (
-    for /f "delims=" %%v in ('type "..\apps\meteo.version.txt"') do (
-        echo     Version installee: %%v
-    )
-    echo     Statut: [INSTALLEE]
-) else (
-    echo     Version: 1.0.0
-    echo     Statut: [A TELECHARGER]
-)
-echo.
-
-echo [9] Gerer les applications instalees
-echo [0] Retour au menu principal
-echo.
-set /p "CHOICE=Selectionnez une option: "
-
-if "%CHOICE%"=="1" goto INSTALL_FREEVM
-if "%CHOICE%"=="2" goto INSTALL_AIRBENZ
-if "%CHOICE%"=="3" goto INSTALL_METEO
-if "%CHOICE%"=="9" goto MANAGE_APPS
-if "%CHOICE%"=="0" exit /b 0
-
-echo.
-echo Option invalide!
-timeout /t 2 >nul
+set /p choice="Veuillez entrer le numero de l'application a installer/desinstaller ou 5 pour revenir: "
+if "%choice%"=="1" goto TOGGLE_FREEVM
+if "%choice%"=="2" goto TOGGLE_MYAIRBENZ
+if "%choice%"=="3" goto TOGGLE_METEO
+if "%choice%"=="4" goto TOGGLE_MUSIQUE
+if "%choice%"=="5" exit /b
+echo Choix invalide. Veuillez reessayer.
+pause
 goto MENU
 
-:INSTALL_FREEVM
-cls
-echo.
-echo ===============================================
-echo      Telecharger / Mettre a jour FreeVM
-echo ===============================================
-echo.
-if exist "..\apps\freeVM.version.txt" (
-    echo Application deja installee.
-    echo Voulez-vous la mettre a jour?
-    set /p "UPDATE=Oui (O) / Non (N): "
-    if /i "!UPDATE!"=="O" (
-        echo Telecharger FreeVM v1.2.0...
-        powershell -command "Invoke-WebRequest -Uri 'https://telservice.com/apps/freeVM.bat' -OutFile '..\apps\freeVM.bat'" 2>nul
-        echo 1.2.0> "..\apps\freeVM.version.txt"
-        echo Mise a jour complete!
+:TOGGLE_FREEVM
+if exist "apps\freeVM.bat" (
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/freeVM.version.txt' -OutFile 'temp_version.txt'" 2>nul
+    if exist "temp_version.txt" (
+        set /p remote_ver=<temp_version.txt
+        if exist "apps\freeVM.version.txt" (
+            set /p local_ver=<apps\freeVM.version.txt
+            if "!local_ver!" neq "!remote_ver!" (
+                echo Mise a jour de LSE FreeVM...
+                powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/freeVM.bat' -OutFile 'apps\freeVM.bat'"
+                copy temp_version.txt "apps\freeVM.version.txt" >nul
+            )
+        ) else (
+            echo Telechargement de la version de LSE FreeVM...
+            powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/freeVM.bat' -OutFile 'apps\freeVM.bat'"
+            copy temp_version.txt "apps\freeVM.version.txt" >nul
+        )
+         del temp_version.txt
     )
+    call "apps\freeVM.bat"
+    goto menu
 ) else (
-    echo Telechargement de FreeVM v1.0.0...
-    powershell -command "Invoke-WebRequest -Uri 'https://telservice.com/apps/freeVM.bat' -OutFile '..\apps\freeVM.bat'" 2>nul
-    echo 1.0.0> "..\apps\freeVM.version.txt"
-    echo Installation complete!
-)
-timeout /t 3 >nul
-goto MENU
-
-:INSTALL_AIRBENZ
-cls
-echo.
-echo ===============================================
-echo      Telecharger / Mettre a jour myAIRBENZ
-echo ===============================================
-echo.
-if exist "..\apps\myAIRBENZ.version.txt" (
-    echo Application deja installee.
-    echo Voulez-vous la mettre a jour?
-    set /p "UPDATE=Oui (O) / Non (N): "
-    if /i "!UPDATE!"=="O" (
-        echo Telechargement de myAIRBENZ v1.1.0...
-        powershell -command "Invoke-WebRequest -Uri 'https://telservice.com/apps/myAIRBENZ.bat' -OutFile '..\apps\myAIRBENZ.bat'" 2>nul
-        echo 1.1.0> "..\apps\myAIRBENZ.version.txt"
-        echo Mise a jour complete!
+    echo Telechargement de LSE FreeVM...
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/freeVM.bat' -OutFile 'apps\freeVM.bat'" 2>nul
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/freeVM.version.txt' -OutFile 'apps\freeVM.version.txt'" 2>nul
+    if exist "apps\freeVM.bat" (
+        call "apps\freeVM.bat"
+    ) else (
+         echo Erreur de telechargement!
+         pause
     )
+     goto menu
+)
+
+:TOGGLE_MYAIRBENZ
+if exist "apps\myAIRBENZ.bat" (
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/myAIRBENZ.version.txt' -OutFile 'temp_version.txt'" 2>nul
+    if exist "temp_version.txt" (
+        set /p remote_ver=<temp_version.txt
+        if exist "apps\myAIRBENZ.version.txt" (
+            set /p local_ver=<apps\myAIRBENZ.version.txt
+            if "!local_ver!" neq "!remote_ver!" (
+                echo Mise a jour de myAIRBENZ...
+                powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/myAIRBENZ.bat' -OutFile 'apps\myAIRBENZ.bat'"
+                copy temp_version.txt "apps\myAIRBENZ.version.txt" >nul
+            )
+        ) else (
+            echo Telechargement de la version de myAIRBENZ...
+            powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/myAIRBENZ.bat' -OutFile 'apps\myAIRBENZ.bat'"
+            copy temp_version.txt "apps\myAIRBENZ.version.txt" >nul
+        )
+        del temp_version.txt
+    )
+    call "apps\myAIRBENZ.bat"
+    goto menu
 ) else (
-    echo Telechargement de myAIRBENZ v1.0.0...
-    powershell -command "Invoke-WebRequest -Uri 'https://telservice.com/apps/myAIRBENZ.bat' -OutFile '..\apps\myAIRBENZ.bat'" 2>nul
-    echo 1.0.0> "..\apps\myAIRBENZ.version.txt"
-    echo Installation complete!
-)
-timeout /t 3 >nul
-goto MENU
-
-:INSTALL_METEO
-cls
-echo.
-echo ===============================================
-echo      Telecharger / Mettre a jour Meteorologie
-echo ===============================================
-echo.
-if exist "..\apps\meteo.version.txt" (
-    echo Application deja installee.
-    echo Voulez-vous la mettre a jour?
-    set /p "UPDATE=Oui (O) / Non (N): "
-    if /i "!UPDATE!"=="O" (
-        echo Telechargement de Meteorologie v1.1.0...
-        powershell -command "Invoke-WebRequest -Uri 'https://telservice.com/apps/meteo.bat' -OutFile '..\apps\meteo.bat'" 2>nul
-        echo 1.1.0> "..\apps\meteo.version.txt"
-        echo Mise a jour complete!
+    echo Telechargement de myAIRBENZ...
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/myAIRBENZ.bat' -OutFile 'apps\myAIRBENZ.bat'" 2>nul
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/myAIRBENZ.version.txt' -OutFile 'apps\myAIRBENZ.version.txt'" 2>nul
+    if exist "apps\myAIRBENZ.bat" (
+        call "apps\myAIRBENZ.bat"
+    ) else (
+        echo Erreur de telechargement!
+        pause
     )
+    goto menu
+)
+
+:TOGGLE_METEO
+if exist "apps\meteo.bat" (
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/meteo.version.txt' -OutFile 'temp_version.txt'" 2>nul
+    if exist "temp_version.txt" (
+        set /p remote_ver=<temp_version.txt
+        if exist "apps\meteo.version.txt" (
+            set /p local_ver=<apps\meteo.version.txt
+            if "!local_ver!" neq "!remote_ver!" (
+                echo Mise a jour de Meteorologie...
+                powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/meteo.bat' -OutFile 'apps\meteo.bat'"
+                copy temp_version.txt "apps\meteo.version.txt" >nul
+            )
+        ) else (
+            echo Telechargement de la version de Meteorologie...
+            powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/meteo.bat' -OutFile 'apps\meteo.bat'"
+            copy temp_version.txt "apps\meteo.version.txt" >nul
+        )
+        del temp_version.txt
+    )
+    call "apps\meteo.bat"
+    goto menu
 ) else (
-    echo Telechargement de Meteorologie v1.0.0...
-    powershell -command "Invoke-WebRequest -Uri 'https://telservice.com/apps/meteo.bat' -OutFile '..\apps\meteo.bat'" 2>nul
-    echo 1.0.0> "..\apps\meteo.version.txt"
-    echo Installation complete!
-)
-timeout /t 3 >nul
-goto MENU
-
-:MANAGE_APPS
-cls
-echo.
-echo ===============================================
-echo      Gestion des applications instalees
-echo ===============================================
-echo.
-echo Applications instalees:
-echo.
-
-set "count=0"
-
-if exist "..\apps\freeVM.version.txt" (
-    set /a count=!count!+1
-    echo [!count!] LSE FreeVM
-    for /f "delims=" %%v in ('type "..\apps\freeVM.version.txt"') do (
-        echo     Version: %%v
+    echo Telechargement de Meteorologie...
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/meteo.bat' -OutFile 'apps\meteo.bat'" 2>nul
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/meteo.version.txt' -OutFile 'apps\meteo.version.txt'" 2>nul
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/meteo_get.ps1' -OutFile 'apps\meteo_get.ps1'" 2>nul
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/meteo_check.ps1' -OutFile 'apps\meteo_check.ps1'" 2>nul
+    if exist "apps\meteo.bat" (
+        call "apps\meteo.bat"
+    ) else (
+        echo Erreur de telechargement!
+        pause
     )
+    goto menu
 )
 
-if exist "..\apps\myAIRBENZ.version.txt" (
-    set /a count=!count!+1
-    echo [!count!] myAIRBENZ
-    for /f "delims=" %%v in ('type "..\apps\myAIRBENZ.version.txt"') do (
-        echo     Version: %%v
+:TOGGLE_MUSIQUE
+if exist "apps\musique.bat" (
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/musique.version.txt' -OutFile 'temp_version.txt'" 2>nul
+    if exist "temp_version.txt" (
+        set /p remote_ver=<temp_version.txt
+        if exist "apps\musique.version.txt" (
+            set /p local_ver=<apps\musique.version.txt
+            if "!local_ver!" neq "!remote_ver!" (
+                echo Mise a jour de Musique...
+                powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/musique.bat' -OutFile 'apps\musique.bat'"
+                copy temp_version.txt "apps\musique.version.txt" >nul
+            )
+        ) else (
+            echo Telechargement de la version de Musique...
+            powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/musique.bat' -OutFile 'apps\musique.bat'"
+            copy temp_version.txt "apps\musique.version.txt" >nul
+        )
+        del temp_version.txt
     )
+    call "apps\musique.bat"
+    goto menu
+) else (
+    echo Telechargement de Musique...
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/musique.bat' -OutFile 'apps\musique.bat'" 2>nul
+    powershell -command "Invoke-WebRequest -Uri 'https://devffin.github.io/dl/apps/musique.version.txt' -OutFile 'apps\musique.version.txt'" 2>nul
+    if exist "apps\musique.bat" (
+        call "apps\musique.bat"
+    ) else (
+        echo Erreur de telechargement!
+        pause
+    )
+    goto menu
 )
 
-if exist "..\apps\meteo.version.txt" (
-    set /a count=!count!+1
-    echo [!count!] Meteorologie
-    for /f "delims=" %%v in ('type "..\apps\meteo.version.txt"') do (
-        echo     Version: %%v
-    )
-)
-
-echo.
-echo [0] Retour
-echo.
-set /p "CHOICE=Selectionnez une app a desinstaller (0 pour annuler): "
-
-if "%CHOICE%"=="0" goto MENU
-if "%CHOICE%"=="1" (
-    if exist "..\apps\freeVM.version.txt" (
-        del "..\apps\freeVM.version.txt"
-        echo LSE FreeVM desinstallee!
-    )
-) else if "%CHOICE%"=="2" (
-    if exist "..\apps\myAIRBENZ.version.txt" (
-        del "..\apps\myAIRBENZ.version.txt"
-        echo myAIRBENZ desinstallee!
-    )
-) else if "%CHOICE%"=="3" (
-    if exist "..\apps\meteo.version.txt" (
-        del "..\apps\meteo.version.txt"
-        echo Meteorologie desinstallee!
-    )
-)
-timeout /t 2 >nul
-goto MENU
