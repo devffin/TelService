@@ -1,1 +1,10 @@
-1.0_BETA
+=== PyTS (TelService for Python compatible systems) version 0.1 ===
+
+Apps:
+- Menu (1.1.0) - Fixed recursion and command injection vulnerabilities
+- ASCIImation (1.0.0) - Platform compatibility error (Windows only)
+- LSE FreeVM (1.0.4) - Added timeouts and error handling
+- Meteo (1.0.2) - Added JSON validation and timeout
+- Musique (1.0.1) - Added file validation and timeout support
+- myAIRBENZ (1.0.4) - Added timeout to network requests
+- TelStore (1.0.0) - Currently closed
