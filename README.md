@@ -1,4 +1,4 @@
-# PyTS 0.1
+# PyTS 1.0 (TS 26.2)
 
 ## Contains
 - Compatibility
